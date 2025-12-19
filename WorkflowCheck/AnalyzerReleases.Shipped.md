@@ -2,6 +2,6 @@
 
 ### New Rules
 
-| Rule ID | Category | Severity | Notes                                                                        |
-|---------|----------|----------|------------------------------------------------------------------------------|
-| WF0001  | Usage    | Error    | Analyzer that reports non-determinism found in Temporal Workflow definition. |
+Rule ID | Category | Severity | Notes
+--------|----------|----------|--------------------
+WF0001  | Usage    | Error    | Analyzer that reports non-determinism found in Temporal Workflow definition.

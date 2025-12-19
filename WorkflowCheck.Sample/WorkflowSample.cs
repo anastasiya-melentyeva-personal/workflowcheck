@@ -13,13 +13,13 @@ public class WorkflowSample
     {
         var randomNumber = RandomNumberGenerator.Create();
         Console.Write(@"Random value: {0}", randomNumber);
-        
+
         var anotherRandomNumber = new Random();
         var randomValue = anotherRandomNumber.NextInt64(1, 5);
         Console.Write(@"Another Random value: {0}", randomValue);
-        
+
         Console.Write(@"Today's Date is relative: {0}", DateTime.Today);
-        
+
         // Not expected to produce a diagnostic
         Console.Write(@"But {0} is not a relative date", new DateTime(2025, 1, 10).Date);
 
@@ -35,7 +35,7 @@ public class WorkflowSample
         PrintRandomGuid();
         return Task.FromResult(0);
     }
-    
+
     private static void PrintRandomGuid()
     {
         // Not expected to produce a diagnostic

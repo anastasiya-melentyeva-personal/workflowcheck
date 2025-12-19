@@ -13,7 +13,7 @@ public static class ObjectCreationExpressionNode
     {
         { "System.Random", true },
     };
-    
+
     public static void Process(CSharpSyntaxNode syntaxNode, SyntaxNodeAnalysisContext context,
         DiagnosticDescriptor rule, Compilation compilation)
     {
@@ -27,13 +27,13 @@ public static class ObjectCreationExpressionNode
         {
             return;
         }
-        
+
         var containsMethod = ObjectCreationExpressionNodes.Keys.Any(key => typeSymbol.ToString().Equals(key));
         if (!containsMethod)
         {
             return;
         }
-        
+
         var diagnostic = Diagnostic.Create(rule, objectCreationExpressionNode.GetLocation(), objectCreationExpressionNode.ToString());
         context.ReportDiagnostic(diagnostic);
     }
