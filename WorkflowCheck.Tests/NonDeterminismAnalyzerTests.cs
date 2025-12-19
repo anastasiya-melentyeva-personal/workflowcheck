@@ -31,7 +31,7 @@ public class Workflow
 }
 ";
 
-        var expected = new []
+        var expected = new[]
         {
             Verifier.Diagnostic()
                 .WithSpan(17, 23, 17, 37)
@@ -106,7 +106,7 @@ public class Workflow
             .WithArguments("System.DateTime.Now");
         await Verifier.VerifyAnalyzerAsync(text, expected).ConfigureAwait(false);
     }
-    
+
     [Fact]
     public async Task TemporalWorkflowCheckAnalyzer_WorkflowDefinitionCallsFunctionContainsNonDeterministicNodTwice_NodeVisitedOnce()
     {
@@ -141,7 +141,7 @@ public class Workflow
             .WithArguments("System.Guid.NewGuid");
         await Verifier.VerifyAnalyzerAsync(text, expected).ConfigureAwait(false);
     }
-    
+
     [Fact]
     public async Task TemporalWorkflowCheckAnalyzer_WorkflowDefinitionContainsNonDeterministicObjectCreationNode_AlertDiagnostic()
     {
@@ -178,7 +178,7 @@ public class Workflow
                 .WithArguments("new Random()");
         await Verifier.VerifyAnalyzerAsync(text, expected).ConfigureAwait(false);
     }
-    
+
     [Fact]
     public async Task TemporalWorkflowCheckAnalyzer_WorkflowDefinitionContainsIdentifierNameNodes_AlertDiagnostic()
     {
@@ -211,7 +211,7 @@ public class Workflow
 }
 ";
 
-        var expected = new []{
+        var expected = new[]{
             Verifier.Diagnostic()
             .WithSpan(17, 26, 17, 31)
             .WithArguments("System.DateTime.Today"),

@@ -15,7 +15,7 @@ public static class IdentifierNameNode
         { "System.DateTime.UtcNow", true },
         { "System.DateTime.Today", true }
     };
-    
+
     public static void Process(CSharpSyntaxNode syntaxNode, SyntaxNodeAnalysisContext context,
         DiagnosticDescriptor rule, Compilation compilation)
     {
@@ -23,14 +23,14 @@ public static class IdentifierNameNode
         {
             return;
         }
-        
+
         var semanticModel = AnalyzerHelpers.GetSemanticModel(context, syntaxNode, compilation);
         var symbolInfo = semanticModel.GetSymbolInfo(identifierNameNode);
         if (symbolInfo.Symbol is null)
         {
             return;
         }
-        
+
         var containsMethod = IdentifierNameNodes.Keys.Any(key => symbolInfo.Symbol.ToString().Equals(key));
         if (!containsMethod)
         {

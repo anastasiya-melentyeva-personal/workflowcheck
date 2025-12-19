@@ -26,15 +26,15 @@ public class NonDeterminismAnalyzer : DiagnosticAnalyzer
     private readonly HashSet<SyntaxNode> _visitedNodes = new();
 
     private const string WorkflowDefinitionMarker = "WorkflowRun";
-    
+
     private readonly Dictionary<string, bool> _nonDeterminismMap = new()
     {
         { "System.Guid.NewGuid", true },
         { "System.Guid.CreateVersion7", true },
-        
+
         { "System.Security.Cryptography.RandomNumberGenerator", true },
     };
-    
+
     // Preferred format of DiagnosticId is Your Prefix + Number, e.g. CA1234.
     private const string DiagnosticId = "WF0001";
     private static readonly LocalizableString Title = new LocalizableResourceString(nameof(Resources.WF0001Title),
@@ -73,7 +73,7 @@ public class NonDeterminismAnalyzer : DiagnosticAnalyzer
 
             // Subscribe to the Syntax Node with the appropriate 'SyntaxKind' (e.g. MethodDeclaration) action.
             compilationStartContext.RegisterSyntaxNodeAction(
-                ctx => AnalyzeSyntax(ctx, compilation), 
+                ctx => AnalyzeSyntax(ctx, compilation),
                 SyntaxKind.MethodDeclaration
             );
         });
@@ -90,31 +90,31 @@ public class NonDeterminismAnalyzer : DiagnosticAnalyzer
         {
             return;
         }
-        
+
         TraverseNode(context, compilation);
     }
-    
+
     private void TraverseNode(SyntaxNodeAnalysisContext context, Compilation compilation)
     {
         if (!_visitedNodes.Add(context.Node))
         {
             return;
         }
-        
+
         ProcessNode(context, compilation);
     }
 
-    
+
     private void ProcessNode(SyntaxNodeAnalysisContext context, Compilation compilation)
     {
         if (context.Node is not MethodDeclarationSyntax methodDeclarationNode)
         {
             return;
         }
-        
+
         // Process all child ObjectCreationExpressionSyntax nodes (e.g. new Random())
         ProcessShallowNodes<ObjectCreationExpressionSyntax>(context, Rule, compilation, ObjectCreationExpressionNode.Process);
-        
+
         // Process all child MemberAccessExpressionSyntax nodes
         // that are not part of InvocationExpressionSyntax nodes (e.g. DateTime.Now)
         ProcessShallowNodes<MemberAccessExpressionSyntax>(context, Rule, compilation, (node, ctx, rule, compilationArg) =>
@@ -124,7 +124,7 @@ public class NonDeterminismAnalyzer : DiagnosticAnalyzer
                 MemberAccessExpressionNode.Process(node, ctx, rule, compilationArg);
             }
         });
-        
+
         // Process all child IdentifierNameSyntax nodes
         // that are not part of MemberAccessExpressionSyntax nodes (e.g. using static System.DateTime; DateTime today = Today;)
         ProcessShallowNodes<IdentifierNameSyntax>(context, Rule, compilation, (node, ctx, rule, compilationArg) =>
@@ -134,7 +134,7 @@ public class NonDeterminismAnalyzer : DiagnosticAnalyzer
                 IdentifierNameNode.Process(node, ctx, rule, compilationArg);
             }
         });
-        
+
         // Traverse all child InvocationExpressionSyntax nodes
         var invocationExpressions = methodDeclarationNode.DescendantNodes().OfType<InvocationExpressionSyntax>();
         foreach (var invocation in invocationExpressions)
@@ -150,7 +150,7 @@ public class NonDeterminismAnalyzer : DiagnosticAnalyzer
             {
                 continue;
             }
-            
+
             var containingType = methodSymbol.ContainingType.ToString();
             var fullInvocation = $"{containingType}.{invokedMethod}";
 
@@ -166,7 +166,7 @@ public class NonDeterminismAnalyzer : DiagnosticAnalyzer
                 }
                 var correspondingMethodDeclarationNode = declaringSyntaxReferences.GetSyntax();
                 var semanticModel = AnalyzerHelpers.GetSemanticModel(context, correspondingMethodDeclarationNode, compilation);
-                
+
                 var childContext = new SyntaxNodeAnalysisContext(
                     correspondingMethodDeclarationNode,
                     semanticModel,
@@ -175,12 +175,12 @@ public class NonDeterminismAnalyzer : DiagnosticAnalyzer
                     (Diagnostic _) => true,
                     context.CancellationToken
                 );
-                
+
                 // Recursively traverse child nodes of the invocationExpression being processed
                 TraverseNode(childContext, compilation);
                 continue;
             }
-            
+
             var diagnostic = Diagnostic.Create(Rule, invocation.GetLocation(), fullInvocation);
             context.ReportDiagnostic(diagnostic);
         }
@@ -200,7 +200,7 @@ public class NonDeterminismAnalyzer : DiagnosticAnalyzer
         {
             return isWorkflowDefinition;
         }
-        
+
         foreach (var attributeList in attributes)
         {
             foreach (var attribute in attributeList.Attributes)
@@ -211,11 +211,11 @@ public class NonDeterminismAnalyzer : DiagnosticAnalyzer
                 {
                     continue;
                 }
-                
+
                 isWorkflowDefinition = true;
                 break;
             }
-            
+
             if (isWorkflowDefinition)
             {
                 break;
@@ -224,9 +224,9 @@ public class NonDeterminismAnalyzer : DiagnosticAnalyzer
 
         return isWorkflowDefinition;
     }
-    
+
     private static void ProcessShallowNodes<TSyntax>(
-        SyntaxNodeAnalysisContext context, 
+        SyntaxNodeAnalysisContext context,
         DiagnosticDescriptor rule,
         Compilation compilation,
         Action<TSyntax, SyntaxNodeAnalysisContext, DiagnosticDescriptor, Compilation> processAction)

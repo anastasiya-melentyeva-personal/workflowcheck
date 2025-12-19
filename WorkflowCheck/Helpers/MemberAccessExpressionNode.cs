@@ -15,7 +15,7 @@ public static class MemberAccessExpressionNode
         { "System.DateTime.UtcNow", true },
         { "System.DateTime.Today", true }
     };
-    
+
     public static void Process(CSharpSyntaxNode syntaxNode, SyntaxNodeAnalysisContext context,
         DiagnosticDescriptor rule, Compilation compilation)
     {
@@ -23,7 +23,7 @@ public static class MemberAccessExpressionNode
         {
             return;
         }
-        
+
         var semanticModel = AnalyzerHelpers.GetSemanticModel(context, syntaxNode, compilation);
         var symbolInfo = semanticModel.GetSymbolInfo(memberAccessExpressionNode);
         if (symbolInfo.Symbol is null)
@@ -37,7 +37,7 @@ public static class MemberAccessExpressionNode
         {
             return;
         }
-        
+
         var diagnostic = Diagnostic.Create(rule, memberAccessExpressionNode.GetLocation(), symbolInfo.Symbol);
         context.ReportDiagnostic(diagnostic);
     }
