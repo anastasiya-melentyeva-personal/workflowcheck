@@ -1,0 +1,16 @@
+# .NET
+**/bin
+**/obj
+
+# Test reports
+tests/results
+
+# JetBrains IDEs
+.idea
+*.DotSettings.user
+
+# Visual Studio
+**/.vs/
+
+# Miscellaneous
+.DS_Store

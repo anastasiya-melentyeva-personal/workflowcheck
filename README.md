@@ -1,0 +1,2 @@
+# workflowcheck
+Temporal Workflow Check is a tool that statically analyzes Temporal Workflow Definitions written in Go (i.e. functions with WorkflowRun Attribute) to check for non-deterministic code either directly in the function or in a function called by the Workflow. 

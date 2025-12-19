@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkflowCheck", "WorkflowCheck\WorkflowCheck.csproj", "{7B81D90E-7E55-49AF-91B9-283D6FCC3B3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkflowCheck.Sample", "WorkflowCheck.Sample\WorkflowCheck.Sample.csproj", "{1D66F4B3-E430-44DE-817D-75FDD7A28B4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkflowCheck.Tests", "WorkflowCheck.Tests\WorkflowCheck.Tests.csproj", "{C079C88F-6C28-4287-A422-2B605757E433}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7B81D90E-7E55-49AF-91B9-283D6FCC3B3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B81D90E-7E55-49AF-91B9-283D6FCC3B3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B81D90E-7E55-49AF-91B9-283D6FCC3B3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B81D90E-7E55-49AF-91B9-283D6FCC3B3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D66F4B3-E430-44DE-817D-75FDD7A28B4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D66F4B3-E430-44DE-817D-75FDD7A28B4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D66F4B3-E430-44DE-817D-75FDD7A28B4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D66F4B3-E430-44DE-817D-75FDD7A28B4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C079C88F-6C28-4287-A422-2B605757E433}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C079C88F-6C28-4287-A422-2B605757E433}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C079C88F-6C28-4287-A422-2B605757E433}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C079C88F-6C28-4287-A422-2B605757E433}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
