@@ -1,4 +1,4 @@
-namespace WorkflowCheck.Helpers;
+namespace WorkflowCheck.Processors;
 
 using System.Collections.Concurrent;
 using Microsoft.CodeAnalysis;

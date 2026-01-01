@@ -1,4 +1,4 @@
-namespace WorkflowCheck.Helpers;
+namespace WorkflowCheck.Processors;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +7,15 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-public static class ObjectCreationExpressionNode
+public static class ObjectCreationExpressionNodeProcessor
 {
     private static readonly Dictionary<string, bool> ObjectCreationExpressionNodes = new()
     {
+        // Randomization and Cryptography
         { "System.Random", true },
+        
+        // Threading and Timing (System.Threading)
+        { "System.Threading.Timer", true },
     };
 
     public static void Process(CSharpSyntaxNode syntaxNode, SyntaxNodeAnalysisContext context,
