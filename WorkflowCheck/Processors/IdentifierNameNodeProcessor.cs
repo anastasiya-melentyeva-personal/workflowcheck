@@ -1,4 +1,4 @@
-namespace WorkflowCheck.Helpers;
+namespace WorkflowCheck.Processors;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +7,11 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-public static class IdentifierNameNode
+public static class IdentifierNameNodeProcessor
 {
     private static readonly Dictionary<string, bool> IdentifierNameNodes = new()
     {
+        // Date and Time
         { "System.DateTime.Now", true },
         { "System.DateTime.UtcNow", true },
         { "System.DateTime.Today", true }

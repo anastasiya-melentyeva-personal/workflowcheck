@@ -7,7 +7,7 @@ using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.AnalyzerVerifier<No
 public class TemporalWorkflowAnalyzerTests
 {
     [Fact]
-    public async Task TemporalWorkflowCheckAnalyzer_WorkflowDefinitionContainsNonDeterministicInvocationExpression_AlertDiagnostic()
+    public async Task WorkflowCheck_ContainsNonDeterministicInvocationExpression_AlertDiagnostic()
     {
         const string text = @"
 using System;
@@ -44,7 +44,7 @@ public class Workflow
     }
 
     [Fact]
-    public async Task TemporalWorkflowCheckAnalyzer_WorkflowDefinitionContainsNonDeterministicChildNode_AlertDiagnostic()
+    public async Task WorkflowCheck_ContainsNonDeterministicChildNode_AlertDiagnostic()
     {
         const string text = @"
 using System;
@@ -78,7 +78,7 @@ public class Workflow
     }
 
     [Fact]
-    public async Task TemporalWorkflowCheckAnalyzer_WorkflowDefinitionContainsMemberAccessExpressionNode_AlertDiagnostic()
+    public async Task WorkflowCheck_ContainsMemberAccessExpressionNode_AlertDiagnostic()
     {
         const string text = @"
 using System;
@@ -108,7 +108,7 @@ public class Workflow
     }
 
     [Fact]
-    public async Task TemporalWorkflowCheckAnalyzer_WorkflowDefinitionCallsFunctionContainsNonDeterministicNodTwice_NodeVisitedOnce()
+    public async Task WorkflowCheck_ContainsNonDeterministicNodeTwice_NodeVisitedOnce()
     {
         const string text = @"
 using System;
@@ -143,7 +143,7 @@ public class Workflow
     }
 
     [Fact]
-    public async Task TemporalWorkflowCheckAnalyzer_WorkflowDefinitionContainsNonDeterministicObjectCreationNode_AlertDiagnostic()
+    public async Task WorkflowCheck_ContainsNonDeterministicObjectCreationNode_AlertDiagnostic()
     {
         const string text = @"
 using System;
@@ -180,7 +180,7 @@ public class Workflow
     }
 
     [Fact]
-    public async Task TemporalWorkflowCheckAnalyzer_WorkflowDefinitionContainsIdentifierNameNodes_AlertDiagnostic()
+    public async Task WorkflowCheck_ContainsIdentifierNameNodes_AlertDiagnostic()
     {
         const string text = @"
 using System;
@@ -218,6 +218,190 @@ public class Workflow
             Verifier.Diagnostic()
                 .WithSpan(24, 24, 24, 27)
                 .WithArguments("System.DateTime.Now")
+        };
+        await Verifier.VerifyAnalyzerAsync(text, expected).ConfigureAwait(false);
+    }
+    
+     [Fact]
+    public async Task WorkflowCheck_ContainsDateTimeMethods_AlertDiagnostic()
+    {
+        const string text = @"
+using System;
+using System.Threading.Tasks;
+
+// mock implementation of the WorkflowRunAttribute attribute
+[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+public sealed class WorkflowRunAttribute : Attribute
+{
+}
+
+public class Workflow
+{
+    [WorkflowRun]
+    public void RunAsync(string request)
+    {
+        Console.Write(DateTime.UtcNow);
+        Console.Write(DateTime.Today);
+    }
+}
+";
+
+        var expected = new[]
+        {
+            Verifier.Diagnostic()
+                .WithSpan(16, 23, 16, 38)
+                .WithArguments("System.DateTime.UtcNow"),
+            Verifier.Diagnostic()
+                .WithSpan(17, 23, 17, 37)
+                .WithArguments("System.DateTime.Today")
+        };
+        await Verifier.VerifyAnalyzerAsync(text, expected).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task WorkflowCheck_ContainsFileIOOperations_AlertDiagnostic()
+    {
+        const string text = @"
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
+// mock implementation of the WorkflowRunAttribute attribute
+[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+public sealed class WorkflowRunAttribute : Attribute
+{
+}
+
+public class Workflow
+{
+    [WorkflowRun]
+    public void RunAsync(string request)
+    {
+        File.ReadAllText(""test.txt"");
+        File.Exists(""test.txt"");
+        Directory.GetFiles(""."");
+    }
+}
+";
+
+        var expected = new[]
+        {
+            Verifier.Diagnostic()
+                .WithSpan(17, 9, 17, 37)
+                .WithArguments("System.IO.File.ReadAllText"),
+            Verifier.Diagnostic()
+                .WithSpan(18, 9, 18, 32)
+                .WithArguments("System.IO.File.Exists"),
+            Verifier.Diagnostic()
+                .WithSpan(19, 9, 19, 32)
+                .WithArguments("System.IO.Directory.GetFiles")
+        };
+        await Verifier.VerifyAnalyzerAsync(text, expected).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task WorkflowCheck_ContainsThreadingOperations_AlertDiagnostic()
+    {
+        const string text = @"
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+// mock implementation of the WorkflowRunAttribute attribute
+[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+public sealed class WorkflowRunAttribute : Attribute
+{
+}
+
+public class Workflow
+{
+    [WorkflowRun]
+    public async Task RunAsync(string request)
+    {
+        Thread.Sleep(1000);
+        ThreadPool.QueueUserWorkItem(_ => {});
+    }
+}
+";
+
+        var expected = new[]
+        {
+            Verifier.Diagnostic()
+                .WithSpan(17, 9, 17, 27)
+                .WithArguments("System.Threading.Thread.Sleep"),
+            Verifier.Diagnostic()
+                .WithSpan(18, 9, 18, 46)
+                .WithArguments("System.Threading.ThreadPool.QueueUserWorkItem")
+        };
+        await Verifier.VerifyAnalyzerAsync(text, expected).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task WorkflowCheck_ContainsEnvironmentAccess_AlertDiagnostic()
+    {
+        const string text = @"
+using System;
+using System.Threading.Tasks;
+
+// mock implementation of the WorkflowRunAttribute attribute
+[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+public sealed class WorkflowRunAttribute : Attribute
+{
+}
+
+public class Workflow
+{
+    [WorkflowRun]
+    public void RunAsync(string request)
+    {
+        Console.Write(Environment.GetEnvironmentVariable(""PATH""));
+    }
+}
+";
+
+        var expected = Verifier.Diagnostic()
+            .WithSpan(16, 23, 16, 65)
+            .WithArguments("System.Environment.GetEnvironmentVariable");
+        await Verifier.VerifyAnalyzerAsync(text, expected).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task WorkflowCheck_ContainsProcessOperations_AlertDiagnostic()
+    {
+        const string text = @"
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+
+// mock implementation of the WorkflowRunAttribute attribute
+[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+public sealed class WorkflowRunAttribute : Attribute
+{
+}
+
+public class Workflow
+{
+    [WorkflowRun]
+    public void RunAsync(string request)
+    {
+        Process.Start(""notepad.exe"");
+        Process.GetProcesses();
+        var stopwatch = Stopwatch.StartNew();
+    }
+}
+";
+
+        var expected = new[]
+        {
+            Verifier.Diagnostic()
+                .WithSpan(17, 9, 17, 37)
+                .WithArguments("System.Diagnostics.Process.Start"),
+            Verifier.Diagnostic()
+                .WithSpan(18, 9, 18, 31)
+                .WithArguments("System.Diagnostics.Process.GetProcesses"),
+            Verifier.Diagnostic()
+                .WithSpan(19, 25, 19, 45)
+                .WithArguments("System.Diagnostics.Stopwatch.StartNew")
         };
         await Verifier.VerifyAnalyzerAsync(text, expected).ConfigureAwait(false);
     }
