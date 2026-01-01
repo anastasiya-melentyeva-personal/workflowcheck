@@ -221,8 +221,8 @@ public class Workflow
         };
         await Verifier.VerifyAnalyzerAsync(text, expected).ConfigureAwait(false);
     }
-    
-     [Fact]
+
+    [Fact]
     public async Task WorkflowCheck_ContainsDateTimeMethods_AlertDiagnostic()
     {
         const string text = @"
